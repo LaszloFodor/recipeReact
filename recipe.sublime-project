@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"src/**/*.css"
+			],
+			"folder_exclude_patterns":
+			[
+				"node_modules",
+				"build"
+			],
+			"path": "."
+		}
+	]
+}

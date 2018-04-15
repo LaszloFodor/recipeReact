@@ -1,0 +1,22 @@
+.recipes .col-title .name {
+  font-weight: bold;
+  font-size: 24px;
+  color: #222; }
+
+.recipes .col-title .desciption {
+  font-size: 18px;
+  color: #666; }
+
+.recipes .col-actions button {
+  font-size: 16px;
+  /*
+            color: $action-button-color;
+            background: $action-button-background;
+*/
+  /* general button style goes here */ }
+  .recipes .col-actions button.action-view {
+    /* view button style goes here */ }
+  .recipes .col-actions button.action-edit {
+    /* edit button style goes here */ }
+  .recipes .col-actions button.action-delete {
+    /* delete button style goes here */ }

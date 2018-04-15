@@ -1,0 +1,48 @@
+@import '../../vars';
+
+.login-dialog {
+    position: fixed;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background: #fff;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    .title {
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 16px;
+        background: #aaa;
+        color: #000;
+        padding: 10px 40px
+    }
+    .content {
+        padding: 5px 10px;
+
+        .username, .password {
+            text-align:left;
+            margin: 10px;
+            label {
+                display: inline-block;
+                width: 30%;
+            }
+            input {
+                display: inline-block;
+                width: 60%;
+                height:18px;
+            }
+        }
+    }
+
+    .actions {
+        padding: 5px 10px;
+    }
+
+    .error-message {
+        text-align: left;
+        margin: 10px;
+        color: #d00;
+    }
+
+}
