@@ -23,8 +23,15 @@ class App extends Component {
   }
 
   componentWillMount() {
-    fetch('/api/user/1', { //TODO: change to  '/api/userinfo' when security is available
+    const headers = {};
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      headers['Authorization'] = 'Bearer ' + accessToken;
+    }
+
+    fetch('/api/whoami', { //TODO: change to  '/api/userinfo' when security is available
       credentials: 'same-origin', // include, same-origin, *omit
+      headers,     
     })
       .then((response) => {
         if (response.status < 200 || response.status >= 300) {
@@ -50,10 +57,11 @@ class App extends Component {
     this.setState({ showLoginDialog: true });
   };
 
-  onLoggedIn = (user) => {
+  onLoggedIn = (user, accessToken) => {
+    localStorage.setItem('accessToken', accessToken);
     this.setState({
       showLoginDialog: false,
-      user,
+      user
     });
   };
 
@@ -69,8 +77,10 @@ class App extends Component {
     fetch('/api/logout', {
       credentials: 'same-origin', // include, same-origin, *omit
     }).then(() => {
+      localStorage.removeItem('accessToken');
       this.setState({
         user: null,
+        accessToken: null,
         loggingOut: false,
       });
       this.props.history.replace('/');

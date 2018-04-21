@@ -37,7 +37,7 @@ class LoginDialog extends Component {
     const { username, password } = this.state;
 
     // call login service
-    fetch('/api/user/1', { // TODO: /api/login
+    fetch('/auth/login', { // TODO: /api/login
       credentials: 'same-origin', // include, same-origin, *omit
       method: 'POST', // TODO: change method to POST
       headers: {
@@ -58,14 +58,15 @@ class LoginDialog extends Component {
       .catch((error) => {
         window.console.log(error);
       })
-      .then((user) => {
+      .then((data) => {
+        const { user, access_token} = data || {};
         // in case of failure login: set error message
-        if (!user) {
+        if (!user || !access_token) {
           // in case of successful login: call the `onLoggedIn` callback method
           this.setState({ error: 'Invalid user name or password, please try again!' });
           return;
         }
-        this.props.onLoggedIn(user);
+        this.props.onLoggedIn(user, access_token);
       });
   };
 

@@ -23,13 +23,17 @@ class EditRecipe extends Component {
     }
 
     componentDidMount() {
+        
+        const headers = {};
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+          headers['Authorization'] = 'Bearer ' + accessToken;
+        }
+
         fetch(`/api/recipe/${this.props.recipeId}`, {
             credentials: 'same-origin',
             method: 'GET',
-            headers: {
-                Accept: '*/*',
-                'Content-Type': 'application/json; charset=utf-8',
-            },
+            headers,
         })
             .then((response) => {
                 if (response.status < 200 || response.status >= 300) {
@@ -51,14 +55,18 @@ class EditRecipe extends Component {
     onSubmitForm = (event) => {
         const { recipe } = this.state;
         event.preventDefault();
+
+        const headers = {};
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+          headers['Authorization'] = 'Bearer ' + accessToken;
+        }
+
         fetch(`/api/recipe/${recipe.id}`, {
             credentials: 'same-origin',
             method: 'PUT',
             body: JSON.stringify(recipe),
-            headers: {
-                Accept: '*/*',
-                'Content-Type': 'application/json; charset=utf-8',
-            },
+            headers,
         })
             .then((response) => {
                 if (response.status < 200 || response.status >= 300) {

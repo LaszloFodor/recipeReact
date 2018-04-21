@@ -25,15 +25,17 @@ class ViewRecipe extends Component {
   }
 
   componentWillMount() {
+
+    const headers = {};
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      headers['Authorization'] = 'Bearer ' + accessToken;
+    }
+
     fetch(`/api/recipe/${this.props.recipeId}`, {
       credentials: 'same-origin', // include, same-origin, *omit
-      /*
-      method: 'GET', // use POST, PUT or DELETE here
-      body: JSON.stringify(bodyObjectOrArrey),
-      headers: {
-        'Authentication': 'Bearer << here goes the JWTtoken >>',
-      },
-*/
+      method: 'GET',
+      headers,
     })
       .then((response) => {
         if (response.status < 200 || response.status >= 300) {

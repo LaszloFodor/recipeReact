@@ -24,8 +24,15 @@ class DeleteRecipe extends Component {
     }
 
     onSubmitForm = (event) => {
-
         event.preventDefault();
+
+        const headers = {};
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+          headers['Authorization'] = 'Bearer ' + accessToken;
+        //   headers['Accept'] = '*/*',
+          headers['Content-Type'] = 'application/json; charset=utf-8'
+        }
 
         fetch(`/api/recipe/${this.props.recipeId}`, {
             credentials: 'same-origin',
@@ -33,7 +40,9 @@ class DeleteRecipe extends Component {
             headers: {
                 Accept: '*/*',
                 'Content-Type': 'application/json; charset=utf-8',
-            }
+                'Authorization': 'Bearer ' + accessToken
+             }
+            
         })
             .then((response) => {
                 if (response.status < 200 || response.status >= 300) {

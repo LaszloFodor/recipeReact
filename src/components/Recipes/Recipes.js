@@ -48,15 +48,18 @@ class Recipes extends Component {
 
   componentWillMount() {
     const mode = Recipes.modes[this.props.mode];
+
+    const headers = {};
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      headers['Authorization'] = 'Bearer ' + accessToken;
+    }
+
     fetch(mode.url, {
       credentials: 'same-origin', // include, same-origin, *omit
-      /*
       method: 'GET', // use POST, PUT or DELETE here
-      body: JSON.stringify(bodyObjectOrArrey),
-      headers: {
-        'Authentication': 'Bearer << here goes the JWTtoken >>',
-      },
-*/
+//      body: JSON.stringify(bodyObjectOrArrey),
+      headers,     
     })
       .then((response) => {
         if (response.status < 200 || response.status >= 300) {
