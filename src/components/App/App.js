@@ -4,7 +4,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import fetch from 'isomorphic-fetch';
 
 import logo from 'resources/images/logo.svg';
-import { ViewRecipe, Recipes, LoginDialog, EditRecipe } from 'components';
+import { ViewRecipe, Recipes, LoginDialog, EditRecipe, ViewUser } from 'components';
 import './App.css';
 
 class App extends Component {
@@ -70,11 +70,15 @@ class App extends Component {
   };
 
   onLogoutClick = () => {
+    this.logout()
+  };
+
+  logout = () => {
     // show logout message and masks application
     this.setState({ loggingOut: true });
 
     // call logout rest and delete user data
-    fetch('/api/logout', {
+    fetch('/auth/logout', {
       credentials: 'same-origin', // include, same-origin, *omit
     }).then(() => {
       localStorage.removeItem('accessToken');
@@ -85,6 +89,18 @@ class App extends Component {
       });
       this.props.history.replace('/');
     });
+  };
+
+  onMyRecipesClick = (event) => {
+    this.props.history.push(`/my-recipes`);
+  };
+
+  onMyProfileClick = () => {
+    this.props.history.push('/my-profile');
+  };
+
+  onDeleteUser = () => {
+    this.doLogout()
   };
 
   render() {
@@ -100,6 +116,8 @@ class App extends Component {
                 <span className="user-name">{user.userName}</span>
                 <span className="user-fullname">({user.firstName} {user.lastName})</span>
               </div>
+              <button onClick={this.onMyProfileClick}>My profile</button>
+              <button onClick={this.onMyRecipesClick}>My recipes</button>
               <button onClick={this.onLogoutClick}>Logout</button>
             </div>
           ) : (
@@ -109,6 +127,7 @@ class App extends Component {
           )}
         </header>
         <Switch>
+          <Route exact path="/my-profile" render={() => <ViewUser user={user} onDelete={this.onDeleteUser} onError={this.onError}/> } />
           <Route exact path="/my-recipes" render={() => <Recipes mode="my" onError={this.onError} />} />
           <Route exact path="/view-recipe/:id" render={props => <ViewRecipe recipeId={+props.match.params.id} onError={this.onError} />} />
 
