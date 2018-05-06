@@ -85,7 +85,7 @@ class Recipes extends Component {
   };
 
   onEditRecipeClick = (event) => {
-    // TODO: route to edit recipe
+    // route to edit recipe
     const recipeId = +event.currentTarget.getAttribute(['data-recipe-id']);
     this.props.history.push(`/edit-recipe/${recipeId}`);
   };
@@ -106,6 +106,10 @@ class Recipes extends Component {
     this.setState({ deleteRecipeId: null });
   }
 
+  onNewRecipeClick = () => {
+    this.props.history.push('/new-recipe');
+  };
+
   render() {
     const { recipes, deleteRecipeId } = this.state;
     const mode = Recipes.modes[this.props.mode];
@@ -114,6 +118,7 @@ class Recipes extends Component {
     return (
       <div className="recipes">
         <h1>{mode.title}</h1>
+        <button className="action-new" type="button" onClick={this.onNewRecipeClick} >New</button>
         <table>
           <thead>
             <tr><th className="col-id">ID</th>
@@ -122,6 +127,7 @@ class Recipes extends Component {
             </tr>
           </thead>
           <tbody>
+          
             {recipes.map(recipe => (
               <tr key={recipe.id}>
                 <td className="col-id">{recipe.id}</td>

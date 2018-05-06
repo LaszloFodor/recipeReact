@@ -9,6 +9,7 @@ class ViewUser extends Component {
 
   static propTypes = {
     // userId: PropTypes.number.isRequired,
+    onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func,
     onError: PropTypes.func,
     history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -27,9 +28,6 @@ class ViewUser extends Component {
     };
   }
 
-  // onEditUserClick = () => {
-
-  // }
   onDeleteUserClick = () => {
     this.setState({ showConfirmDialog: true });
   };
@@ -67,7 +65,7 @@ class ViewUser extends Component {
   render() {
     return (
       <div className="user-profile">
-        <button onClick={this.onEditUserClick}>Edit</button>
+        <button onClick={this.props.onEdit}>Edit</button>
         <button onClick={this.onDeleteUserClick}>Delete</button>
         {this.state.showConfirmDialog ? <Dialog title="Confirmation" message="Would you like to delete your profile?" onButtonClick={this.onDeleteButtonClick} /> : ''}
         <div>

@@ -6,3 +6,4 @@ export { default as LoginDialog } from './LoginDialog/LoginDialog';
 export { default as EditRecipe } from './EditRecipe/EditRecipe';
 export { default as DeleteRecipe } from './DeleteRecipe/DeleteRecipe';
 export { default as ViewUser } from './ViewUser/ViewUser';
+export { default as EditUser } from './EditUser/EditUser';

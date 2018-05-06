@@ -4,7 +4,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import fetch from 'isomorphic-fetch';
 
 import logo from 'resources/images/logo.svg';
-import { ViewRecipe, Recipes, LoginDialog, EditRecipe, ViewUser } from 'components';
+import { ViewRecipe, Recipes, LoginDialog, EditRecipe, ViewUser, EditUser, NewRecipe } from 'components';
 import './App.css';
 
 class App extends Component {
@@ -81,14 +81,18 @@ class App extends Component {
     fetch('/auth/logout', {
       credentials: 'same-origin', // include, same-origin, *omit
     }).then(() => {
-      localStorage.removeItem('accessToken');
+      this.doLogout();
+    });
+  };
+
+  doLogout = () => {
+    localStorage.removeItem('accessToken');
       this.setState({
         user: null,
         accessToken: null,
         loggingOut: false,
       });
       this.props.history.replace('/');
-    });
   };
 
   onMyRecipesClick = (event) => {
@@ -103,6 +107,18 @@ class App extends Component {
     this.doLogout()
   };
 
+  onEditUser = () => {
+    this.props.history.push('/edit-profile');
+  };
+
+  onUserUpdate = (user) => {
+    this.setState({user});
+  };
+
+  onHomeClick = () => {
+    this.props.history.push('/');
+  }
+
   render() {
     const { user, loggingOut, showLoginDialog } = this.state;
     return (
@@ -116,6 +132,7 @@ class App extends Component {
                 <span className="user-name">{user.userName}</span>
                 <span className="user-fullname">({user.firstName} {user.lastName})</span>
               </div>
+              <button onClick={this.onHomeClick}>Home</button>
               <button onClick={this.onMyProfileClick}>My profile</button>
               <button onClick={this.onMyRecipesClick}>My recipes</button>
               <button onClick={this.onLogoutClick}>Logout</button>
@@ -127,7 +144,9 @@ class App extends Component {
           )}
         </header>
         <Switch>
-          <Route exact path="/my-profile" render={() => <ViewUser user={user} onDelete={this.onDeleteUser} onError={this.onError}/> } />
+          
+          <Route exact path="/my-profile" render={() => <ViewUser user={user} onEdit={this.onEditUser} onDelete={this.onDeleteUser} onError={this.onError}/> } />
+          <Route exact path="/edit-profile" render={() => <EditUser user={user} onUpdate={this.onUserUpdate} onError={this.onError} /> } />
           <Route exact path="/my-recipes" render={() => <Recipes mode="my" onError={this.onError} />} />
           <Route exact path="/view-recipe/:id" render={props => <ViewRecipe recipeId={+props.match.params.id} onError={this.onError} />} />
 

@@ -153,6 +153,7 @@ class EditRecipe extends Component {
                         <label htmlFor="ingredients">Ingredients:</label>
                         {(ingredients || []).map(ingredient =>
                             <li key={ingredient.id}>
+                                <input type="text" id="ingredients.amount" data-id={ingredient.amount} value={ingredient.amount} onChange={this.onInputChange} />   
                                 <input type="text" id="ingredients.name" data-id={ingredient.id} value={ingredient.name} onChange={this.onInputChange} />
                             </li>
                         )}
@@ -162,8 +163,8 @@ class EditRecipe extends Component {
                         <label htmlFor="nutritions">Nutritions:</label>
                         {(nutritions || []).map((nutrition, idx) =>
                             <li key={nutrition.id}>
-                                <input type="text" id="nutritions.amount" data-id={nutrition.id} value={nutrition.amount} onChange={this.onInputChange} />
-                                <input type="text" id="nutritions.type" data-id={nutrition.id} value={nutrition.type} onChange={this.onInputChange} />
+                                <input type="text" id="nutritions.amount" data-id={nutrition.amount} value={nutrition.amount} onChange={this.onInputChange} />
+                                <input type="text" id="nutritions.uom" data-id={nutrition.ton} value={nutrition.ton} onChange={this.onInputChange} />
                             </li>
                         )}
                     </ul>
