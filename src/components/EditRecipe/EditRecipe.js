@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import IngredientAdder from './IngredientAdder';
 import fetch from 'isomorphic-fetch';
 
 class EditRecipe extends Component {
@@ -17,9 +18,9 @@ class EditRecipe extends Component {
 
   state = {
     recipe: null,
-    ingredientsCount: 1,
-    nutritionsCount: 1,
-    selectedCategory: null
+    selectedCategory: null,
+    categories: [],
+    enableAddIngredient: false
   };
 
   componentDidMount() {
@@ -81,8 +82,7 @@ class EditRecipe extends Component {
       });
   }
 
-  onCategorySelect = event =>
-    this.setState({ selectedCategory: event.target.value }, () => console.log(this.state.selectedCategory));
+  onCategorySelect = event => this.setState({ selectedCategory: event.target.value });
 
   onSubmitForm = event => {
     const { recipe } = this.state;
@@ -144,6 +144,7 @@ class EditRecipe extends Component {
     // in case of dot we check for dataId and update the item regarding to its value
     const subItems = recipe[idParts[0]];
     if (dataId) {
+      console.log(subItems);
       const items = [...subItems];
       const itemIdx = items.findIndex(item => item.id === dataId);
       items[itemIdx][idParts[1]] = value;
@@ -156,7 +157,22 @@ class EditRecipe extends Component {
 
   onBackClick = () => this.props.history.goBack();
 
-  onClickDelete = event => console.log(event);
+  onClickDelete = event => {
+    const dataId = +event.currentTarget.getAttribute('data-id');
+    const newIngredients = Object.assign([], this.state.recipe.ingredients);
+    const itemToDeleteIndx = newIngredients.findIndex(ingredient => ingredient.id === dataId);
+    if (itemToDeleteIndx < 0) return;
+
+    newIngredients.splice(itemToDeleteIndx, 1);
+    this.setState(currentState => {
+      return {
+        recipe: {
+          ...currentState.recipe,
+          ingredients: newIngredients
+        }
+      };
+    });
+  };
 
   onAddItem = event => {
     this.setState(currentState => {
@@ -168,8 +184,18 @@ class EditRecipe extends Component {
     });
   };
 
+  onAddNewIngredient = () => {
+    this.setState({ enableAddIngredient: true });
+  };
+
   onAddCategoryClick = () => {
     const { recipe, selectedCategory } = this.state;
+    const selectedCategoryIndex = this.state.categories.findIndex(category => category.name === selectedCategory);
+    if (selectedCategoryIndex < 0) return;
+    const newCategories = Object.assign([], this.state.categories);
+    newCategories.splice(selectedCategoryIndex, 1);
+
+    console.log(selectedCategoryIndex);
 
     this.setState({
       recipe: {
@@ -181,7 +207,9 @@ class EditRecipe extends Component {
             name: selectedCategory
           }
         ]
-      }
+      },
+
+      categories: newCategories
     });
   };
 
@@ -214,7 +242,7 @@ class EditRecipe extends Component {
           </div>
           <ul className="ingredients">
             <label htmlFor="ingredients">Ingredients:</label>
-            <button type="button" name="ingredientsCount" onClick={this.onAddItem}>
+            <button type="button" name="ingredientsCount" onClick={this.onAddNewIngredient}>
               + Add Ingredients
             </button>
             {(ingredients || []).map(ingredient => (
@@ -228,18 +256,26 @@ class EditRecipe extends Component {
                 />
                 <input
                   type="text"
+                  id="ingredients.uom"
+                  data-id={ingredient.uom}
+                  value={ingredient.uom}
+                  onChange={this.onInputChange}
+                />
+                <input
+                  type="text"
                   id="ingredients.name"
                   data-id={ingredient.id}
                   value={ingredient.name}
                   onChange={this.onInputChange}
                 />
-                {this.state.ingredientsCount > 1 ? (
-                  <button type="button" onClick={this.onClickDelete}>
+                {this.state.recipe.ingredients.length > 1 ? (
+                  <button data-id={ingredient.id} type="button" onClick={this.onClickDelete}>
                     -
                   </button>
                 ) : null}
               </li>
             ))}
+            {this.state.enableAddIngredient ? <IngredientAdder /> : null}
           </ul>
 
           <ul className="nutritions">
@@ -263,7 +299,7 @@ class EditRecipe extends Component {
                   value={nutrition.ton}
                   onChange={this.onInputChange}
                 />
-                {this.state.nutritionsCount > 1 ? (
+                {this.state.recipe.nutritions.length > 1 ? (
                   <button type="button" onClick={this.onClickDelete}>
                     -
                   </button>

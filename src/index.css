@@ -12,7 +12,8 @@ button {
     color: #fff;
     background: #04a; }
   button:disabled {
-    background: #d3d6d8; }
+    background: #d3d6d8;
+    text-decoration: none; }
 
 li {
   list-style-type: none; }
