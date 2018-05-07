@@ -31,7 +31,7 @@ class App extends Component {
 
     fetch('/api/whoami', { //TODO: change to  '/api/userinfo' when security is available
       credentials: 'same-origin', // include, same-origin, *omit
-      headers,     
+      headers,
     })
       .then((response) => {
         if (response.status < 200 || response.status >= 300) {
@@ -87,12 +87,12 @@ class App extends Component {
 
   doLogout = () => {
     localStorage.removeItem('accessToken');
-      this.setState({
-        user: null,
-        accessToken: null,
-        loggingOut: false,
-      });
-      this.props.history.replace('/');
+    this.setState({
+      user: null,
+      accessToken: null,
+      loggingOut: false,
+    });
+    this.props.history.replace('/');
   };
 
   onMyRecipesClick = (event) => {
@@ -112,7 +112,7 @@ class App extends Component {
   };
 
   onUserUpdate = (user) => {
-    this.setState({user});
+    this.setState({ user });
   };
 
   onHomeClick = () => {
@@ -138,19 +138,21 @@ class App extends Component {
               <button onClick={this.onLogoutClick}>Logout</button>
             </div>
           ) : (
-            <div className="user-info">
-              <button onClick={this.onLoginClick}>Login</button>
-            </div>
-          )}
+              <div className="user-info">
+                <button onClick={this.onLoginClick}>Login</button>
+              </div>
+            )}
         </header>
         <Switch>
-          
-          <Route exact path="/my-profile" render={() => <ViewUser user={user} onEdit={this.onEditUser} onDelete={this.onDeleteUser} onError={this.onError}/> } />
-          <Route exact path="/edit-profile" render={() => <EditUser user={user} onUpdate={this.onUserUpdate} onError={this.onError} /> } />
+
+          <Route exact path="/my-profile" render={() => <ViewUser user={user} onEdit={this.onEditUser} onDelete={this.onDeleteUser} onError={this.onError} />} />
+          <Route exact path="/edit-profile" render={() => <EditUser user={user} onUpdate={this.onUserUpdate} onError={this.onError} />} />
           <Route exact path="/my-recipes" render={() => <Recipes mode="my" onError={this.onError} />} />
           <Route exact path="/view-recipe/:id" render={props => <ViewRecipe recipeId={+props.match.params.id} onError={this.onError} />} />
 
+
           <Route exact path="/edit-recipe/:id" render={props => <EditRecipe recipeId={+props.match.params.id} onError={this.onError} />} />
+          <Route exact path="/new-recipe/" render={props => <EditRecipe onError={this.onError} />} />
 
           <Route render={() => <Recipes mode="all" onError={this.onError} />} />
         </Switch>

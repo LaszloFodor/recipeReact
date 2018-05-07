@@ -5,13 +5,14 @@ import fetch from 'isomorphic-fetch';
 
 class EditRecipe extends Component {
     static propTypes = {
-        recipeId: PropTypes.number.isRequired,
+        recipeId: PropTypes.number,
         onError: PropTypes.func,
         history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     };
 
     static defaultProps = {
         onError: null,
+        recipeId: null
     };
 
     constructor() {
@@ -23,7 +24,16 @@ class EditRecipe extends Component {
     }
 
     componentDidMount() {
-        
+        if (this.props.recipeId === null) {
+            this.setState({ recipe: {
+                ingredients: [{ id: -Date.now(), name: '', amount: ''}],
+                nutritions: [{ id: -Date.now(), amount: '', ton: ''}],
+                categories: [{ id: -Date.now(), name: ''}]
+            }});
+            return;
+        }
+
+        console.log(this.props)
         const headers = {};
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken) {
@@ -62,10 +72,13 @@ class EditRecipe extends Component {
           headers['Authorization'] = 'Bearer ' + accessToken;
         }
 
+        const data = { ...recipe }; 
+        data.categories = data.categories.map(category => category.id < 0 ? { id: null, name: category.name } : category);
+
         fetch(`/api/recipe/${recipe.id}`, {
             credentials: 'same-origin',
             method: 'PUT',
-            body: JSON.stringify(recipe),
+            body: JSON.stringify(data),
             headers,
         })
             .then((response) => {
@@ -122,6 +135,15 @@ class EditRecipe extends Component {
 
     onBackClick = () => this.props.history.goBack();
 
+    onAddCategoryClick = () => {
+        const { recipe } = this.state;
+        
+        this.setState({ recipe: { ...recipe, categories: [...recipe.categories, {
+            id: -Date.now(),
+            name: ''
+        }]}});
+    };
+
     render() {
         const { recipe } = this.state;
         const { ingredients, nutritions, categories } = recipe || {};
@@ -164,7 +186,7 @@ class EditRecipe extends Component {
                         {(nutritions || []).map((nutrition, idx) =>
                             <li key={nutrition.id}>
                                 <input type="text" id="nutritions.amount" data-id={nutrition.amount} value={nutrition.amount} onChange={this.onInputChange} />
-                                <input type="text" id="nutritions.uom" data-id={nutrition.ton} value={nutrition.ton} onChange={this.onInputChange} />
+                                <input type="text" id="nutritions.ton" data-id={nutrition.ton} value={nutrition.ton} onChange={this.onInputChange} />
                             </li>
                         )}
                     </ul>
@@ -177,6 +199,7 @@ class EditRecipe extends Component {
                             </li>
                         )}
                     </ul>
+                    <button type="button" onClick={this.onAddCategoryClick}>Add Category</button>
 
                     <ul className="difficulty">
                         <label htmlFor="difficulty">Difficulty:</label>
