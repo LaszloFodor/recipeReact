@@ -11,6 +11,11 @@ button {
   button:hover {
     color: #fff;
     background: #04a; }
+  button:disabled {
+    background: #d3d6d8; }
+
+li {
+  list-style-type: none; }
 
 body {
   margin: 0;

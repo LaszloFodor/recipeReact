@@ -1,18 +1,25 @@
 button {
-    margin:4px 10px;
-    padding: 4px 12px;
-    font-size: 14px;
-    box-sizing: border-box;
-    color: #eee;
-    background: #038;
-    border: solid 2px transparent;
+  margin: 4px 10px;
+  padding: 4px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  color: #eee;
+  background: #038;
+  border: solid 2px transparent;
 
-    &:focus {
-        border: solid 2px #ff0;
-    }
+  &:focus {
+    border: solid 2px #ff0;
+  }
 
-    &:hover {
-        color: #fff;
-        background: #04a;
-    }
+  &:hover {
+    color: #fff;
+    background: #04a;
+  }
+  &:disabled {
+    background: #d3d6d8;
+    text-decoration: none
+}
+
+li {
+  list-style-type: none;
 }
