@@ -33,10 +33,10 @@
   },
   "proxy": {
     "/api": {
-      "target": "http://192.168.0.234:8080"
+      "target": "http://localhost:8080"
     },
     "/auth": {
-      "target": "http://192.168.0.234:8080"
+      "target": "http://localhost:8080"
     }
   }
 }

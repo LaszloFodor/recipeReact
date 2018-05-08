@@ -250,14 +250,14 @@ class EditRecipe extends Component {
                 <input
                   type="text"
                   id="ingredients.amount"
-                  data-id={ingredient.amount}
+                  data-id={ingredient.id}
                   value={ingredient.amount}
                   onChange={this.onInputChange}
                 />
                 <input
                   type="text"
                   id="ingredients.uom"
-                  data-id={ingredient.uom}
+                  data-id={ingredient.id}
                   value={ingredient.uom}
                   onChange={this.onInputChange}
                 />
@@ -288,14 +288,14 @@ class EditRecipe extends Component {
                 <input
                   type="text"
                   id="nutritions.amount"
-                  data-id={nutrition.amount}
+                  data-id={nutrition.id}
                   value={nutrition.amount}
                   onChange={this.onInputChange}
                 />
                 <input
                   type="text"
                   id="nutritions.ton"
-                  data-id={nutrition.ton}
+                  data-id={nutrition.id}
                   value={nutrition.ton}
                   onChange={this.onInputChange}
                 />
