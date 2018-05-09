@@ -27,7 +27,6 @@ class EditRecipe extends Component {
     if (this.props.recipeId === null) {
       this.setState({
         recipe: {
-          ingredients: [{ id: -Date.now(), name: '', amount: '' }],
           nutritions: [{ id: -Date.now(), amount: '', ton: '' }],
           categories: [{ id: -Date.now(), name: '' }]
         }
@@ -84,11 +83,38 @@ class EditRecipe extends Component {
 
   onCategorySelect = event => this.setState({ selectedCategory: event.target.value });
 
+  onSaveNewIngredient = (event, { amount, name, selectedUnit }) => {
+    const newIngredient = { id: null, recipeId: this.state.recipe.id, name, amount: +amount, uom: selectedUnit };
+    const { recipe, enableAddIngredient } = this.state;
+
+    this.setState({
+      recipe: {
+        ...recipe,
+        ingredients: [...recipe.ingredients, newIngredient]
+      },
+      enableAddIngredient: false
+    });
+
+    /* this.setState(
+      currentState => {
+        return {
+          ...currentState.recipe,
+          ingredients: [...currentState.recipe.ingredients, newIngredient],
+          enableAddIngredient: false
+        };
+      },
+      () => console.log(this.state)
+    ); */
+  };
+
   onSubmitForm = event => {
     const { recipe } = this.state;
     event.preventDefault();
 
-    const headers = {};
+    const headers = {
+      Accept: '*/*',
+      'Content-Type': 'application/json; charset=utf-8'
+    };
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
       headers['Authorization'] = 'Bearer ' + accessToken;
@@ -144,7 +170,6 @@ class EditRecipe extends Component {
     // in case of dot we check for dataId and update the item regarding to its value
     const subItems = recipe[idParts[0]];
     if (dataId) {
-      console.log(subItems);
       const items = [...subItems];
       const itemIdx = items.findIndex(item => item.id === dataId);
       items[itemIdx][idParts[1]] = value;
@@ -242,7 +267,12 @@ class EditRecipe extends Component {
           </div>
           <ul className="ingredients">
             <label htmlFor="ingredients">Ingredients:</label>
-            <button type="button" name="ingredientsCount" onClick={this.onAddNewIngredient}>
+            <button
+              disabled={this.state.enableAddIngredient}
+              type="button"
+              name="ingredientsCount"
+              onClick={this.onAddNewIngredient}
+            >
               + Add Ingredients
             </button>
             {(ingredients || []).map(ingredient => (
@@ -275,7 +305,50 @@ class EditRecipe extends Component {
                 ) : null}
               </li>
             ))}
-            {this.state.enableAddIngredient ? <IngredientAdder /> : null}
+            {this.state.enableAddIngredient ? (
+              <IngredientAdder>
+                {props => {
+                  return (
+                    <div>
+                      <input
+                        onChange={props.onInputChange}
+                        name="amount"
+                        type="text"
+                        id="ingredients.amount"
+                        placeholder="Please add the amount"
+                      />
+                      <select onChange={props.onSelect} name="unit" defaultValue="default" value={props.selectedUnit}>
+                        <option value="default" disabled>
+                          Please select unit
+                        </option>
+                        {props.uom
+                          ? props.uom.map((item, index) => (
+                              <option value={item} key={index}>
+                                {item}
+                              </option>
+                            ))
+                          : null}
+                      </select>
+                      <input
+                        onChange={props.onInputChange}
+                        type="text"
+                        id="ingredients.name"
+                        name="name"
+                        placeholder="Please add ingerdient"
+                      />
+                      <button onClick={event => this.onSaveNewIngredient(event, props)}>Save</button>
+                      <button
+                        onClick={() =>
+                          this.setState(({ enableAddIngredient }) => ({ enableAddIngredient: !enableAddIngredient }))
+                        }
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  );
+                }}
+              </IngredientAdder>
+            ) : null}
           </ul>
 
           <ul className="nutritions">
@@ -284,7 +357,7 @@ class EditRecipe extends Component {
               + Add Nutrition
             </button>
             {(nutritions || []).map((nutrition, idx) => (
-              <li key={nutrition.id}>
+              <li key={idx}>
                 <input
                   type="text"
                   id="nutritions.amount"
