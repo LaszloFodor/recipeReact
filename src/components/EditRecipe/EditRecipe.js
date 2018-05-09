@@ -4,6 +4,8 @@ import { withRouter } from 'react-router-dom';
 import IngredientAdder from './IngredientAdder';
 import fetch from 'isomorphic-fetch';
 
+import './EditRecipe.css';
+
 class EditRecipe extends Component {
   static propTypes = {
     recipeId: PropTypes.number,
@@ -20,17 +22,44 @@ class EditRecipe extends Component {
     recipe: null,
     selectedCategory: null,
     categories: [],
-    enableAddIngredient: false
+    enableAddIngredient: false,
+    selectedDifficulty: null
   };
+
+  difficulty = [
+    { display: 'Easy', value: 'EASY' },
+    { display: 'Medium', value: 'MEDIUM' },
+    { display: 'Hard', value: 'HARD' }
+  ];
 
   componentDidMount() {
     if (this.props.recipeId === null) {
-      this.setState({
-        recipe: {
-          nutritions: [{ id: -Date.now(), amount: '', ton: '' }],
-          categories: [{ id: -Date.now(), name: '' }]
-        }
-      });
+      fetch(`/api/recipe/categories`, {
+        credentials: 'same-origin',
+        method: 'GET'
+      })
+        .then(response => {
+          if (response.status < 200 || response.status >= 300) {
+            throw new Error('Error in server response!');
+          }
+          return response.json();
+        })
+        .catch(error => {
+          if (this.props.onError) {
+            this.props.onError(error);
+          }
+          // no data or error happened
+        })
+        .then(categories => {
+          this.setState({
+            recipe: {
+              ingredients: [],
+              nutritions: []
+            },
+            categories: categories || []
+          });
+        });
+
       return;
     }
 
@@ -106,6 +135,9 @@ class EditRecipe extends Component {
       () => console.log(this.state)
     ); */
   };
+  onSelectChange = event => {
+    this.setState({ selectedDifficulty: event.target.value });
+  };
 
   onSubmitForm = event => {
     const { recipe } = this.state;
@@ -149,6 +181,7 @@ class EditRecipe extends Component {
   onInputChange = event => {
     // update the field value in state
     const { recipe } = this.state;
+    debugger;
     const { id, value } = event.currentTarget;
 
     const idParts = id.split('.');
@@ -182,10 +215,9 @@ class EditRecipe extends Component {
 
   onBackClick = () => this.props.history.goBack();
 
-  onClickDelete = event => {
-    const dataId = +event.currentTarget.getAttribute('data-id');
+  onClickDelete = (event, ingredient) => {
     const newIngredients = Object.assign([], this.state.recipe.ingredients);
-    const itemToDeleteIndx = newIngredients.findIndex(ingredient => ingredient.id === dataId);
+    const itemToDeleteIndx = newIngredients.findIndex(item => item.name === ingredient.name);
     if (itemToDeleteIndx < 0) return;
 
     newIngredients.splice(itemToDeleteIndx, 1);
@@ -194,6 +226,23 @@ class EditRecipe extends Component {
         recipe: {
           ...currentState.recipe,
           ingredients: newIngredients
+        }
+      };
+    });
+  };
+
+  onClickDeleteCategory = (event, category) => {
+    debugger;
+    const newCategories = Object.assign([], this.state.recipe.categories);
+    const itemToDeleteIndx = newCategories.findIndex(item => item.name === category.name);
+    if (itemToDeleteIndx < 0) return;
+
+    newCategories.splice(itemToDeleteIndx, 1);
+    this.setState(currentState => {
+      return {
+        recipe: {
+          ...currentState.recipe,
+          categories: newCategories
         }
       };
     });
@@ -220,20 +269,17 @@ class EditRecipe extends Component {
     const newCategories = Object.assign([], this.state.categories);
     newCategories.splice(selectedCategoryIndex, 1);
 
-    console.log(selectedCategoryIndex);
-
     this.setState({
       recipe: {
         ...recipe,
         categories: [
-          ...recipe.categories,
+          ...(recipe.categories || {}),
           {
             id: -Date.now(),
             name: selectedCategory
           }
         ]
       },
-
       categories: newCategories
     });
   };
@@ -247,25 +293,57 @@ class EditRecipe extends Component {
     }
 
     return (
-      <form className="edit-recipe" onSubmit={this.onSubmitForm}>
-        <div className="recipe">
-          <div className="name">
-            <label htmlFor="name">Recipe name:</label>
-            <input type="text" id="name" value={recipe.name} onChange={this.onInputChange} />
-          </div>
-          <div className="serving">
-            <label htmlFor="serving">Servings:</label>
-            <input type="text" id="servings" value={recipe.servings} onChange={this.onInputChange} />
-          </div>
-          <div className="cookTime">
-            <label htmlFor="cookTime">Cook Time:</label>
-            <input type="text" id="cookTime" value={recipe.cookTime} onChange={this.onInputChange} />
-          </div>
-          <div className="source">
-            <label htmlFor="source">Source:</label>
-            <input type="text" id="source" value={recipe.source} onChange={this.onInputChange} />
-          </div>
-          <ul className="ingredients">
+      <form className="edit-recipe container" onSubmit={this.onSubmitForm}>
+        <div className="recipe columns">
+          <label htmlFor="name" className="column is-2">
+            Recipe name:
+          </label>
+          <input
+            className="input column is-10"
+            type="text"
+            id="name"
+            value={recipe.name}
+            onChange={this.onInputChange}
+          />
+        </div>
+        <div className="serving columns ">
+          <label className="column is-2" htmlFor="serving">
+            Servings:
+          </label>
+          <input
+            className="input column is-10"
+            type="text"
+            id="servings"
+            value={recipe.servings}
+            onChange={this.onInputChange}
+          />
+        </div>
+        <div className="cookTime columns">
+          <label className="column is-2" htmlFor="cookTime">
+            Cook Time:
+          </label>
+          <input
+            className="input column is-10"
+            type="text"
+            id="cookTime"
+            value={recipe.cookTime}
+            onChange={this.onInputChange}
+          />
+        </div>
+        <div className="source columns">
+          <label className="column is-2" htmlFor="source">
+            Source:
+          </label>
+          <input
+            className="input column is-10"
+            type="text"
+            id="source"
+            value={recipe.source}
+            onChange={this.onInputChange}
+          />
+        </div>
+        <ul className="ingredients">
+          <div className="ingredients-wrapper title">
             <label htmlFor="ingredients">Ingredients:</label>
             <button
               disabled={this.state.enableAddIngredient}
@@ -275,115 +353,126 @@ class EditRecipe extends Component {
             >
               + Add Ingredients
             </button>
-            {(ingredients || []).map(ingredient => (
-              <li key={ingredient.id}>
-                <input
-                  type="text"
-                  id="ingredients.amount"
-                  data-id={ingredient.id}
-                  value={ingredient.amount}
-                  onChange={this.onInputChange}
-                />
-                <input
-                  type="text"
-                  id="ingredients.uom"
-                  data-id={ingredient.id}
-                  value={ingredient.uom}
-                  onChange={this.onInputChange}
-                />
-                <input
-                  type="text"
-                  id="ingredients.name"
-                  data-id={ingredient.id}
-                  value={ingredient.name}
-                  onChange={this.onInputChange}
-                />
-                {this.state.recipe.ingredients.length > 1 ? (
-                  <button data-id={ingredient.id} type="button" onClick={this.onClickDelete}>
-                    -
-                  </button>
-                ) : null}
-              </li>
-            ))}
-            {this.state.enableAddIngredient ? (
-              <IngredientAdder>
-                {props => {
-                  return (
-                    <div>
-                      <input
-                        onChange={props.onInputChange}
-                        name="amount"
-                        type="text"
-                        id="ingredients.amount"
-                        placeholder="Please add the amount"
-                      />
-                      <select onChange={props.onSelect} name="unit" defaultValue="default" value={props.selectedUnit}>
-                        <option value="default" disabled>
-                          Please select unit
-                        </option>
-                        {props.uom
-                          ? props.uom.map((item, index) => (
-                              <option value={item} key={index}>
-                                {item}
-                              </option>
-                            ))
-                          : null}
-                      </select>
-                      <input
-                        onChange={props.onInputChange}
-                        type="text"
-                        id="ingredients.name"
-                        name="name"
-                        placeholder="Please add ingerdient"
-                      />
-                      <button onClick={event => this.onSaveNewIngredient(event, props)}>Save</button>
-                      <button
-                        onClick={() =>
-                          this.setState(({ enableAddIngredient }) => ({ enableAddIngredient: !enableAddIngredient }))
-                        }
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  );
-                }}
-              </IngredientAdder>
-            ) : null}
-          </ul>
+          </div>
+          {(ingredients || []).map(ingredient => (
+            <li key={ingredient.id} className="columns">
+              <input
+                type="text"
+                id="ingredients.amount"
+                data-id={ingredient.id}
+                value={ingredient.amount}
+                onChange={this.onInputChange}
+                className="input column is-4"
+              />
+              <input
+                type="text"
+                id="ingredients.uom"
+                data-id={ingredient.id}
+                value={ingredient.uom}
+                onChange={this.onInputChange}
+                className="input column is-4"
+              />
+              <input
+                type="text"
+                id="ingredients.name"
+                data-id={ingredient.id}
+                value={ingredient.name}
+                onChange={this.onInputChange}
+                className="input column is-4"
+              />
+              {this.state.recipe.ingredients.length > 1 ? (
+                <button data-id={ingredient.id} type="button" onClick={event => this.onClickDelete(event, ingredient)}>
+                  -
+                </button>
+              ) : null}
+            </li>
+          ))}
+          {this.state.enableAddIngredient ? (
+            <IngredientAdder>
+              {props => {
+                return (
+                  <div>
+                    <input
+                      onChange={props.onInputChange}
+                      name="amount"
+                      type="text"
+                      id="ingredients.amount"
+                      placeholder="Please add the amount"
+                      className="input"
+                    />
+                    <select
+                      className="input"
+                      onChange={props.onSelect}
+                      name="unit"
+                      defaultValue="default"
+                      value={props.selectedUnit}
+                    >
+                      <option value="default" disabled>
+                        Please select unit
+                      </option>
+                      {props.uom
+                        ? props.uom.map((item, index) => (
+                            <option value={item} key={index}>
+                              {item}
+                            </option>
+                          ))
+                        : null}
+                    </select>
+                    <input
+                      onChange={props.onInputChange}
+                      type="text"
+                      id="ingredients.name"
+                      name="name"
+                      placeholder="Please add ingerdient"
+                      className="input"
+                    />
+                    <button onClick={event => this.onSaveNewIngredient(event, props)}>Save</button>
+                    <button
+                      onClick={() =>
+                        this.setState(({ enableAddIngredient }) => ({ enableAddIngredient: !enableAddIngredient }))
+                      }
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                );
+              }}
+            </IngredientAdder>
+          ) : null}
+        </ul>
 
-          <ul className="nutritions">
+        <ul className="nutritions">
+          <div className="title">
             <label htmlFor="nutritionsCount">Nutritions:</label>
-            <button type="button" onClick={event => this.onAddItem(event)}>
-              + Add Nutrition
-            </button>
-            {(nutritions || []).map((nutrition, idx) => (
-              <li key={idx}>
-                <input
-                  type="text"
-                  id="nutritions.amount"
-                  data-id={nutrition.id}
-                  value={nutrition.amount}
-                  onChange={this.onInputChange}
-                />
-                <input
-                  type="text"
-                  id="nutritions.ton"
-                  data-id={nutrition.id}
-                  value={nutrition.ton}
-                  onChange={this.onInputChange}
-                />
-                {this.state.recipe.nutritions.length > 1 ? (
-                  <button type="button" onClick={this.onClickDelete}>
-                    -
-                  </button>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+          </div>
+          {(nutritions || []).map((nutrition, idx) => (
+            <li key={idx} className="columns">
+              <input
+                type="text"
+                id="nutritions.amount"
+                data-id={nutrition.id}
+                value={nutrition.amount}
+                onChange={this.onInputChange}
+                className="input column is-6"
+              />
+              <input
+                type="text"
+                id="nutritions.ton"
+                data-id={nutrition.id}
+                value={nutrition.ton}
+                onChange={this.onInputChange}
+                className="input column is-6"
+              />
+            </li>
+          ))}
+        </ul>
 
-          <ul className="categories">
+        <ul className="categories ">
+          <div className="title">
             <label htmlFor="categories">Categories:</label>
-            <select onChange={this.onCategorySelect} name="category">
+          </div>
+          <div className="columns">
+            <select className="input column is-8" onChange={this.onCategorySelect} name="category">
               <option disabled selected>
                 Please select a category
               </option>
@@ -395,29 +484,56 @@ class EditRecipe extends Component {
                 );
               })}
             </select>
-            <button disabled={!this.state.selectedCategory} type="button" onClick={this.onAddCategoryClick}>
+            <button
+              className="column is-4"
+              disabled={!this.state.selectedCategory}
+              type="button"
+              onClick={this.onAddCategoryClick}
+            >
               Add Category
             </button>
-            {(categories || []).map(category => (
-              <li key={category.id}>
-                <input
-                  type="text"
-                  id="categories.name"
-                  data-id={category.id}
-                  value={category.name}
-                  onChange={this.onInputChange}
-                />
-              </li>
-            ))}
-          </ul>
+          </div>
+          {(categories || []).map(category => (
+            <li key={category.id} className="columns">
+              <input
+                type="text"
+                id="categories.name"
+                data-id={category.id}
+                value={category.name}
+                onChange={this.onInputChange}
+                className="input "
+              />
+              {this.state.recipe.categories.length > 1 ? (
+                <button className="" type="button" onClick={event => this.onClickDeleteCategory(event, category)}>
+                  -
+                </button>
+              ) : null}
+            </li>
+          ))}
+        </ul>
 
-          <ul className="difficulty">
+        <ul className="difficulty">
+          <div className="title">
             <label htmlFor="difficulty">Difficulty:</label>
-            <input type="text" id="difficulty" value={recipe.difficulty} onChange={this.onInputChange} />
-          </ul>
-        </div>
+          </div>
+          <select
+            defaultValue="default"
+            value={this.state.selectedDifficulty}
+            name="difficulty"
+            id="difficulty"
+            onChange={this.onSelectChange}
+            className="input"
+          >
+            <option disabled value="default">
+              Please select difficulty
+            </option>
+            {this.difficulty.map((diff, idx) => {
+              return <option value={diff.value}>{diff.display}</option>;
+            })}
+          </select>
+        </ul>
         <div className="actions">
-          <button type="submit">Edit</button>
+          <button type="submit">{this.props.recipeId === null ? 'Add' : 'Edit'}</button>
           <button type="button" onClick={this.onBackClick}>
             Close
           </button>

@@ -2,12 +2,13 @@
   text-align: center;
 
   .app-header {
-    display:flex;
-    flex-direction:row;
-    align-items:center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     background-color: #222;
     padding: 5px 20px;
     color: white;
+    margin-bottom: 50px;
   }
 
   .app-logo {
@@ -24,9 +25,13 @@
   .user-info {
     flex: 0 auto;
     .logged-user {
-      margin:0px 0px 5px 0px;
-      .user-name { padding: 5px; }
-      .user-fullname { padding: 5px; }
+      margin: 0px 0px 5px 0px;
+      .user-name {
+        padding: 5px;
+      }
+      .user-fullname {
+        padding: 5px;
+      }
     }
   }
   .mask {
@@ -36,7 +41,7 @@
     left: 0px;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
   }
   .dialog {
     position: fixed;
@@ -51,6 +56,10 @@
 }
 
 @keyframes app-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

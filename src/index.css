@@ -5,20 +5,26 @@ button {
   box-sizing: border-box;
   color: #eee;
   background: #038;
-  border: solid 2px transparent; }
-  button:focus {
-    border: solid 2px #ff0; }
-  button:hover {
-    color: #fff;
-    background: #04a; }
-  button:disabled {
-    background: #d3d6d8;
-    text-decoration: none; }
+  border: solid 2px transparent;
+}
+button:focus {
+  border: solid 2px #ff0;
+}
+button:hover {
+  color: #fff;
+  background: #04a;
+}
+button:disabled {
+  background: #d3d6d8;
+  text-decoration: none;
+}
 
 li {
-  list-style-type: none; }
+  list-style-type: none;
+}
 
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif; }
+  font-family: sans-serif;
+}

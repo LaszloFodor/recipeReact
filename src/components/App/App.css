@@ -6,7 +6,8 @@
     align-items: center;
     background-color: #222;
     padding: 5px 20px;
-    color: white; }
+    color: white;
+    margin-bottom: 50px; }
   .app .app-logo {
     flex: 0 auto;
     animation: app-logo-spin infinite 10s linear;

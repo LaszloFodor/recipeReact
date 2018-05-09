@@ -6,10 +6,11 @@ import fetch from 'isomorphic-fetch';
 import logo from 'resources/images/logo.svg';
 import { ViewRecipe, Recipes, LoginDialog, EditRecipe, ViewUser, EditUser, NewRecipe } from 'components';
 import './App.css';
+import 'bulma/css/bulma.css';
 
 class App extends Component {
   static propTypes = {
-    history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    history: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
   };
 
   constructor() {
@@ -18,7 +19,7 @@ class App extends Component {
     this.state = {
       user: null,
       showLoginDialog: false,
-      loggingOut: false,
+      loggingOut: false
     };
   }
 
@@ -29,25 +30,26 @@ class App extends Component {
       headers['Authorization'] = 'Bearer ' + accessToken;
     }
 
-    fetch('/api/whoami', { //TODO: change to  '/api/userinfo' when security is available
+    fetch('/api/whoami', {
+      //TODO: change to  '/api/userinfo' when security is available
       credentials: 'same-origin', // include, same-origin, *omit
-      headers,
+      headers
     })
-      .then((response) => {
+      .then(response => {
         if (response.status < 200 || response.status >= 300) {
           throw new Error('Unable to retrieve user information!');
         }
         return response.json();
       })
-      .catch((error) => {
+      .catch(error => {
         window.console.log(error);
       })
-      .then((user) => {
+      .then(user => {
         this.setState({ user: user || null });
       });
   }
 
-  onError = (error) => {
+  onError = error => {
     window.console.log(error);
     // TODO: handle error application level (eg. set a state, and display a dialog)
   };
@@ -70,7 +72,7 @@ class App extends Component {
   };
 
   onLogoutClick = () => {
-    this.logout()
+    this.logout();
   };
 
   logout = () => {
@@ -79,7 +81,7 @@ class App extends Component {
 
     // call logout rest and delete user data
     fetch('/auth/logout', {
-      credentials: 'same-origin', // include, same-origin, *omit
+      credentials: 'same-origin' // include, same-origin, *omit
     }).then(() => {
       this.doLogout();
     });
@@ -90,12 +92,12 @@ class App extends Component {
     this.setState({
       user: null,
       accessToken: null,
-      loggingOut: false,
+      loggingOut: false
     });
     this.props.history.replace('/');
   };
 
-  onMyRecipesClick = (event) => {
+  onMyRecipesClick = event => {
     this.props.history.push(`/my-recipes`);
   };
 
@@ -104,20 +106,20 @@ class App extends Component {
   };
 
   onDeleteUser = () => {
-    this.doLogout()
+    this.doLogout();
   };
 
   onEditUser = () => {
     this.props.history.push('/edit-profile');
   };
 
-  onUserUpdate = (user) => {
+  onUserUpdate = user => {
     this.setState({ user });
   };
 
   onHomeClick = () => {
     this.props.history.push('/');
-  }
+  };
 
   render() {
     const { user, loggingOut, showLoginDialog } = this.state;
@@ -130,7 +132,9 @@ class App extends Component {
             <div className="user-info">
               <div className="logged-user">
                 <span className="user-name">{user.userName}</span>
-                <span className="user-fullname">({user.firstName} {user.lastName})</span>
+                <span className="user-fullname">
+                  ({user.firstName} {user.lastName})
+                </span>
               </div>
               <button onClick={this.onHomeClick}>Home</button>
               <button onClick={this.onMyProfileClick}>My profile</button>
@@ -138,20 +142,36 @@ class App extends Component {
               <button onClick={this.onLogoutClick}>Logout</button>
             </div>
           ) : (
-              <div className="user-info">
-                <button onClick={this.onLoginClick}>Login</button>
-              </div>
-            )}
+            <div className="user-info">
+              <button onClick={this.onLoginClick}>Login</button>
+            </div>
+          )}
         </header>
         <Switch>
-
-          <Route exact path="/my-profile" render={() => <ViewUser user={user} onEdit={this.onEditUser} onDelete={this.onDeleteUser} onError={this.onError} />} />
-          <Route exact path="/edit-profile" render={() => <EditUser user={user} onUpdate={this.onUserUpdate} onError={this.onError} />} />
+          <Route
+            exact
+            path="/my-profile"
+            render={() => (
+              <ViewUser user={user} onEdit={this.onEditUser} onDelete={this.onDeleteUser} onError={this.onError} />
+            )}
+          />
+          <Route
+            exact
+            path="/edit-profile"
+            render={() => <EditUser user={user} onUpdate={this.onUserUpdate} onError={this.onError} />}
+          />
           <Route exact path="/my-recipes" render={() => <Recipes mode="my" onError={this.onError} />} />
-          <Route exact path="/view-recipe/:id" render={props => <ViewRecipe recipeId={+props.match.params.id} onError={this.onError} />} />
+          <Route
+            exact
+            path="/view-recipe/:id"
+            render={props => <ViewRecipe recipeId={+props.match.params.id} onError={this.onError} />}
+          />
 
-
-          <Route exact path="/edit-recipe/:id" render={props => <EditRecipe recipeId={+props.match.params.id} onError={this.onError} />} />
+          <Route
+            exact
+            path="/edit-recipe/:id"
+            render={props => <EditRecipe recipeId={+props.match.params.id} onError={this.onError} />}
+          />
           <Route exact path="/new-recipe/" render={props => <EditRecipe onError={this.onError} />} />
 
           <Route render={() => <Recipes mode="all" onError={this.onError} />} />
