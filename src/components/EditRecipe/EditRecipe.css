@@ -7,3 +7,6 @@
 .title {
   margin: 20px auto 20px;
   font-weight: 300; }
+
+.category-column > .column {
+  padding: 0 10px 0 10px; }

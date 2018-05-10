@@ -293,7 +293,7 @@ class EditRecipe extends Component {
     }
 
     return (
-      <form className="edit-recipe container" onSubmit={this.onSubmitForm}>
+      <form className="edit-recipe" onSubmit={this.onSubmitForm}>
         <div className="recipe columns">
           <label htmlFor="name" className="column is-2">
             Recipe name:
@@ -467,11 +467,11 @@ class EditRecipe extends Component {
           ))}
         </ul>
 
-        <ul className="categories ">
+        <ul className="categories">
           <div className="title">
             <label htmlFor="categories">Categories:</label>
           </div>
-          <div className="columns">
+          <div className="columns category-column">
             <select className="input column is-8" onChange={this.onCategorySelect} name="category">
               <option disabled selected>
                 Please select a category
@@ -528,7 +528,11 @@ class EditRecipe extends Component {
               Please select difficulty
             </option>
             {this.difficulty.map((diff, idx) => {
-              return <option value={diff.value}>{diff.display}</option>;
+              return (
+                <option key={idx} value={diff.value}>
+                  {diff.display}
+                </option>
+              );
             })}
           </select>
         </ul>

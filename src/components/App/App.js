@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import fetch from 'isomorphic-fetch';
 
-import logo from 'resources/images/logo.svg';
+import logo from 'resources/images/recipe-logo.png';
 import { ViewRecipe, Recipes, LoginDialog, EditRecipe, ViewUser, EditUser, NewRecipe } from 'components';
 import './App.css';
 import 'bulma/css/bulma.css';
@@ -147,35 +147,37 @@ class App extends Component {
             </div>
           )}
         </header>
-        <Switch>
-          <Route
-            exact
-            path="/my-profile"
-            render={() => (
-              <ViewUser user={user} onEdit={this.onEditUser} onDelete={this.onDeleteUser} onError={this.onError} />
-            )}
-          />
-          <Route
-            exact
-            path="/edit-profile"
-            render={() => <EditUser user={user} onUpdate={this.onUserUpdate} onError={this.onError} />}
-          />
-          <Route exact path="/my-recipes" render={() => <Recipes mode="my" onError={this.onError} />} />
-          <Route
-            exact
-            path="/view-recipe/:id"
-            render={props => <ViewRecipe recipeId={+props.match.params.id} onError={this.onError} />}
-          />
+        <div className="container">
+          <Switch>
+            <Route
+              exact
+              path="/my-profile"
+              render={() => (
+                <ViewUser user={user} onEdit={this.onEditUser} onDelete={this.onDeleteUser} onError={this.onError} />
+              )}
+            />
+            <Route
+              exact
+              path="/edit-profile"
+              render={() => <EditUser user={user} onUpdate={this.onUserUpdate} onError={this.onError} />}
+            />
+            <Route exact path="/my-recipes" render={() => <Recipes mode="my" onError={this.onError} />} />
+            <Route
+              exact
+              path="/view-recipe/:id"
+              render={props => <ViewRecipe recipeId={+props.match.params.id} onError={this.onError} />}
+            />
 
-          <Route
-            exact
-            path="/edit-recipe/:id"
-            render={props => <EditRecipe recipeId={+props.match.params.id} onError={this.onError} />}
-          />
-          <Route exact path="/new-recipe/" render={props => <EditRecipe onError={this.onError} />} />
+            <Route
+              exact
+              path="/edit-recipe/:id"
+              render={props => <EditRecipe recipeId={+props.match.params.id} onError={this.onError} />}
+            />
+            <Route exact path="/new-recipe/" render={props => <EditRecipe onError={this.onError} />} />
 
-          <Route render={() => <Recipes mode="all" onError={this.onError} />} />
-        </Switch>
+            <Route render={() => <Recipes mode="all" onError={this.onError} />} />
+          </Switch>
+        </div>
         {loggingOut || showLoginDialog ? <div className="mask" /> : ''}
         {showLoginDialog ? <LoginDialog onLoggedIn={this.onLoggedIn} onClose={this.onLoginClose} /> : ''}
       </div>

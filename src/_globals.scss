@@ -4,7 +4,7 @@ button {
   font-size: 14px;
   box-sizing: border-box;
   color: #eee;
-  background: #038;
+  background: rgb(121, 121, 121);
   border: solid 2px transparent;
 
   &:focus {
@@ -13,7 +13,7 @@ button {
 
   &:hover {
     color: #fff;
-    background: #04a;
+    background: rgb(161, 163, 165);
   }
   &:disabled {
     background: #d3d6d8;
