@@ -345,6 +345,7 @@ class EditRecipe extends Component {
             id="name"
             value={recipe.name}
             onChange={this.onInputChange}
+            placeholder="Please add recipe name"
           />
         </div>
         <div className="serving columns ">
@@ -357,6 +358,7 @@ class EditRecipe extends Component {
             id="servings"
             value={recipe.servings}
             onChange={this.onInputChange}
+            placeholder="Please add serving size"
           />
         </div>
         <div className="cookTime columns">
@@ -369,6 +371,7 @@ class EditRecipe extends Component {
             id="cookTime"
             value={recipe.cookTime}
             onChange={this.onInputChange}
+            placeholder="Please add cooking time"
           />
         </div>
         <div className="source columns">
@@ -381,6 +384,7 @@ class EditRecipe extends Component {
             id="source"
             value={recipe.source}
             onChange={this.onInputChange}
+            placeholder="Please add source"
           />
         </div>
         <div className="instructions columns">
@@ -394,9 +398,8 @@ class EditRecipe extends Component {
                 id="instructions"
                 value={recipe.instructions}
                 onChange={this.onInputChange}
-              >
-                Please add instructions
-              </textarea>
+                placeholder="Please add instructions"
+              />
             </div>
           </div>
         </div>
@@ -421,6 +424,7 @@ class EditRecipe extends Component {
                 value={ingredient.amount}
                 onChange={this.onInputChange}
                 className="input column is-4"
+                placeholder="Please add amount"
               />
               <input
                 type="text"
@@ -429,6 +433,7 @@ class EditRecipe extends Component {
                 value={ingredient.uom}
                 onChange={this.onInputChange}
                 className="input column is-4"
+                placeholder="Please add unit of measurement"
               />
               <input
                 type="text"
@@ -437,6 +442,7 @@ class EditRecipe extends Component {
                 value={ingredient.name}
                 onChange={this.onInputChange}
                 className="input column is-4"
+                placeholder="Please add name"
               />
               {this.state.recipe.ingredients.length > 1 ? (
                 <button data-id={ingredient.id} type="button" onClick={event => this.onClickDelete(event, ingredient)}>
