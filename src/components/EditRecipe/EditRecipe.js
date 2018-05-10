@@ -23,7 +23,8 @@ class EditRecipe extends Component {
     selectedCategory: null,
     categories: [],
     enableAddIngredient: false,
-    selectedDifficulty: null
+    selectedDifficulty: null,
+    isEdit: false
   };
 
   difficulty = [
@@ -54,9 +55,14 @@ class EditRecipe extends Component {
           this.setState({
             recipe: {
               ingredients: [],
-              nutritions: []
+              nutritions: [
+                { amount: null, ton: 'FAT' },
+                { amount: null, ton: 'CARBOHYDRATE' },
+                { amount: null, ton: 'PROTEIN' }
+              ]
             },
-            categories: categories || []
+            categories: categories || [],
+            isEdit: false
           });
         });
 
@@ -105,12 +111,14 @@ class EditRecipe extends Component {
             // no data or error happened
           })
           .then(categories => {
-            this.setState({ recipe: recipe || null, categories: categories || [] });
+            this.setState({ recipe: recipe || null, categories: categories || [], isEdit: true });
           });
       });
   }
 
-  onCategorySelect = event => this.setState({ selectedCategory: event.target.value });
+  onCategorySelect = event => {
+    this.setState({ selectedCategory: JSON.parse(event.target.value) });
+  };
 
   onSaveNewIngredient = (event, { amount, name, selectedUnit }) => {
     const newIngredient = { id: null, recipeId: this.state.recipe.id, name, amount: +amount, uom: selectedUnit };
@@ -140,7 +148,7 @@ class EditRecipe extends Component {
   };
 
   onSubmitForm = event => {
-    const { recipe } = this.state;
+    const { recipe, isEdit, selectedDifficulty } = this.state;
     event.preventDefault();
 
     const headers = {
@@ -152,39 +160,74 @@ class EditRecipe extends Component {
       headers['Authorization'] = 'Bearer ' + accessToken;
     }
 
-    const data = { ...recipe };
+    const data = { ...recipe, difficulty: selectedDifficulty };
     data.categories = data.categories.map(category => (category.id < 0 ? { id: null, name: category.name } : category));
 
-    fetch(`/api/recipe/${recipe.id}`, {
-      credentials: 'same-origin',
-      method: 'PUT',
-      body: JSON.stringify(data),
-      headers
-    })
-      .then(response => {
-        if (response.status < 200 || response.status >= 300) {
-          throw new Error('Error in server response!');
-        }
-        return response.json();
+    if (isEdit) {
+      fetch(`/api/recipe/${recipe.id}`, {
+        credentials: 'same-origin',
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers
       })
-      .catch(error => {
-        if (this.props.onError) {
-          this.props.onError(error);
-        }
-        // no data or error happened
+        .then(response => {
+          if (response.status < 200 || response.status >= 300) {
+            throw new Error('Error in server response!');
+          }
+          return response.json();
+        })
+        .catch(error => {
+          if (this.props.onError) {
+            this.props.onError(error);
+          }
+          // no data or error happened
+        })
+        .then(recipe => {
+          this.setState({ recipe: recipe || null });
+        });
+    } else {
+      fetch(`/api/recipe`, {
+        credentials: 'same-origin',
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers
       })
-      .then(recipe => {
-        this.setState({ recipe: recipe || null });
-      });
+        .then(response => {
+          if (response.status < 200 || response.status >= 300) {
+            throw new Error('Error in server response!');
+          }
+          return response.json();
+        })
+        .catch(error => {
+          if (this.props.onError) {
+            this.props.onError(error);
+          }
+          // no data or error happened
+        })
+        .then(recipe => {
+          this.setState({ recipe: recipe || null });
+        });
+    }
   };
 
   onInputChange = event => {
     // update the field value in state
-    const { recipe } = this.state;
-    debugger;
+    const { recipe, isEdit } = this.state;
     const { id, value } = event.currentTarget;
 
     const idParts = id.split('.');
+    if (!isEdit) {
+      const nutrionName = event.currentTarget.getAttribute('data-nutritionName');
+      const nutritionIdx = recipe.nutritions.findIndex(item => item.ton === nutrionName);
+      const newNutritions = Object.assign([], recipe.nutritions);
+      if (nutritionIdx >= 0) {
+        newNutritions[nutritionIdx].amount = value;
+        this.setState({ recipe: { ...recipe, nutritions: newNutritions } });
+      } else {
+        this.setState({ recipe: { ...recipe, [id]: value } });
+      }
+      return;
+    }
     const dataId = +event.currentTarget.getAttribute('data-id');
     // in case id has no dot in the id we simply apply the change
     if (idParts.length === 1) {
@@ -232,7 +275,6 @@ class EditRecipe extends Component {
   };
 
   onClickDeleteCategory = (event, category) => {
-    debugger;
     const newCategories = Object.assign([], this.state.recipe.categories);
     const itemToDeleteIndx = newCategories.findIndex(item => item.name === category.name);
     if (itemToDeleteIndx < 0) return;
@@ -264,7 +306,7 @@ class EditRecipe extends Component {
 
   onAddCategoryClick = () => {
     const { recipe, selectedCategory } = this.state;
-    const selectedCategoryIndex = this.state.categories.findIndex(category => category.name === selectedCategory);
+    const selectedCategoryIndex = this.state.categories.findIndex(category => category.name === selectedCategory.name);
     if (selectedCategoryIndex < 0) return;
     const newCategories = Object.assign([], this.state.categories);
     newCategories.splice(selectedCategoryIndex, 1);
@@ -275,8 +317,7 @@ class EditRecipe extends Component {
         categories: [
           ...(recipe.categories || {}),
           {
-            id: -Date.now(),
-            name: selectedCategory
+            ...selectedCategory
           }
         ]
       },
@@ -286,7 +327,7 @@ class EditRecipe extends Component {
 
   render() {
     const { recipe } = this.state;
-    const { ingredients, nutritions, categories } = recipe || {};
+    const { ingredients, nutritions, categories, selectedCategory } = recipe || {};
 
     if (!recipe) {
       return <div className="edit-recipe">Loading or no recipe found...</div>;
@@ -341,6 +382,23 @@ class EditRecipe extends Component {
             value={recipe.source}
             onChange={this.onInputChange}
           />
+        </div>
+        <div className="instructions columns">
+          <label className="column is-2" htmlFor="source">
+            Instructions:
+          </label>
+          <div className="field column is-10">
+            <div className="control">
+              <textarea
+                className="textarea "
+                id="instructions"
+                value={recipe.instructions}
+                onChange={this.onInputChange}
+              >
+                Please add instructions
+              </textarea>
+            </div>
+          </div>
         </div>
         <ul className="ingredients">
           <div className="ingredients-wrapper title">
@@ -451,9 +509,11 @@ class EditRecipe extends Component {
                 type="text"
                 id="nutritions.amount"
                 data-id={nutrition.id}
+                data-nutritionName={nutrition.ton}
                 value={nutrition.amount}
                 onChange={this.onInputChange}
                 className="input column is-6"
+                placeholder="Please add amount"
               />
               <input
                 type="text"
@@ -472,13 +532,18 @@ class EditRecipe extends Component {
             <label htmlFor="categories">Categories:</label>
           </div>
           <div className="columns category-column">
-            <select className="input column is-8" onChange={this.onCategorySelect} name="category">
+            <select
+              className="input column is-8"
+              value={selectedCategory}
+              onChange={this.onCategorySelect}
+              name="category"
+            >
               <option disabled selected>
                 Please select a category
               </option>
               {this.state.categories.map((category, index) => {
                 return (
-                  <option key={index} value={category.name}>
+                  <option key={index} value={JSON.stringify(category)}>
                     {category.name}
                   </option>
                 );
