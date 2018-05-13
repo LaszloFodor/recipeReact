@@ -13,7 +13,12 @@
   },
   "dependencies": {
     "bulma": "^0.7.1",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "isomorphic-fetch": "^2.2.1",
+    "jest": "^22.4.3",
+    "jest-cli": "^22.4.3",
+    "jest-localstorage-mock": "^2.2.0",
     "npm-run-all": "^4.1.2",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
@@ -31,6 +36,9 @@
     "build": "npm run build-css && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "jest": {
+    "setupFiles": ["jest-localstorage-mock"]
   },
   "proxy": {
     "/api": {
