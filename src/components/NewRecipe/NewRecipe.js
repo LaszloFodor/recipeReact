@@ -35,7 +35,7 @@ class NewRecipe extends Component {
           </div>
           <ul className="ingredients">
             <label htmlFor="ingredients">Ingredients:</label>
-            {(ingredients || []).map(ingredient =>
+            {(this.props.ingredients || []).map(ingredient =>
               <li key={ingredient.id}>
                 <input type="text" id="ingredients.amount" data-id={ingredient.amount} onChange={this.onInputChange} />
                 <input type="text" id="ingredients.name" data-id={ingredient.id} onChange={this.onInputChange} />
@@ -45,19 +45,21 @@ class NewRecipe extends Component {
 
           <ul className="nutritions">
             <label htmlFor="nutritions">Nutritions:</label>
-            <input type="text" id="nutritions.amount" data-id={nutrition.amount} onChange={this.onInputChange} />
-            <input type="text" id="nutritions.uom" data-id={nutrition.ton} onChange={this.onInputChange} />
-
+            {(this.props.nutritions || []).map(nutrition =>
+              <li key={nutrition.id}>
+                <input type="text" id="nutritions.amount" data-id={nutrition.amount} onChange={this.onInputChange} />
+                <input type="text" id="nutritions.uom" data-id={nutrition.ton} onChange={this.onInputChange} />
+              </li>
             )}
-              </ul>
+          </ul>
 
           <ul className="categories">
             <label htmlFor="categories">Categories:</label>
-      
-              <li key={category.id}>
-                <input type="text" id="categories.name" data-id={category.id} onChange={this.onInputChange} />
-              </li>
-          
+            
+            <li key={category.id}>
+              <input type="text" id="categories.name" data-id={category.id} onChange={this.onInputChange} />
+            </li>
+
           </ul>
 
           <ul className="difficulty">
