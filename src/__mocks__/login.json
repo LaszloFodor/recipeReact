@@ -1,0 +1,21 @@
+{
+    "access_token": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJMYWNpIiwic3ViIjoibGFjaXVzZXIiLCJhdWQiOiJ3ZWIiLCJpYXQiOjE1MjYzMDQ1NTEsImV4cCI6MTUyNjMwNDg1MX0.yGbCoo5MKyf4p6bc9JeTqD2TOXm9yd1WhoqCVKqrIFCSiSY3cWP7SK9wp_VEAIQHz6s5XftpUN1Debv8hd4GrA",
+    "expires_in": 300,
+    "user": {
+        "id": 3,
+        "username": "laciuser",
+        "firstName": "Laszlo",
+        "lastName": "Fodor",
+        "email": "laci@laci.hu",
+        "enabled": true,
+        "lastPasswordResetDate": 1526303937926,
+        "authorities": [
+            {
+                "authority": "ROLE_ADMIN"
+            },
+            {
+                "authority": "ROLE_USER"
+            }
+        ]
+    }
+}
