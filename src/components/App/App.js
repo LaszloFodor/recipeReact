@@ -4,7 +4,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import fetch from 'isomorphic-fetch';
 
 import logo from 'resources/images/recipe-logo.png';
-import { ViewRecipe, Recipes, LoginDialog, EditRecipe, ViewUser, EditUser, NewRecipe } from 'components';
+import { ViewRecipe, Recipes, LoginDialog, EditRecipe, ViewUser, EditUser } from 'components';
 import './App.css';
 import 'bulma/css/bulma.css';
 

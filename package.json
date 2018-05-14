@@ -37,9 +37,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "jest": {
-    "setupFiles": ["jest-localstorage-mock"]
-  },
   "proxy": {
     "/api": {
       "target": "http://192.168.0.234:8080"

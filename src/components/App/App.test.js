@@ -10,5 +10,5 @@ it('renders without crashing', () => {
       <App />
     </MemoryRouter>
   );
-  expect(wrapper.find(".app")).toHaveLength(1);
+  expect(wrapper.find('.app')).toHaveLength(1);
 });
